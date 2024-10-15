@@ -49,10 +49,10 @@ namespace dae
 			//todo: W3
 
 			Vector3 reflect = l - 2*(Vector3::Dot(n,l))*n;
-			float cosAlpha = Vector3::Dot(reflect, v);
+			float cosAlpha = Vector3::Dot(reflect.Normalized(), v.Normalized());
 			
 
-			return { ColorRGB(1,1,1) * ks * pow(cosAlpha,exp) };
+			return { ColorRGB(1,1,1) * ks * std::max(0.f,pow(cosAlpha,exp))};
 		}
 
 		/**

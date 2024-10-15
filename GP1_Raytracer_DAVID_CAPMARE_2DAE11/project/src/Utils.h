@@ -123,26 +123,17 @@ namespace dae
 		inline ColorRGB GetRadiance(const Light& light, const Vector3& target)
 		{
 			//todo W3
-			ColorRGB Ergb{};
-			float fluxInWatt{};
-			float E{};
-			float A{};
 			switch (light.type)
 			{
 			case LightType::Point:
-				fluxInWatt = light.intensity;
-				A = (target - light.origin).SqrMagnitude();
-				E = fluxInWatt / A;
-				Ergb = light.color * E;
+				return light.color * light.intensity / (target - light.origin).SqrMagnitude();
 				break;
 			case LightType::Directional:
-				Ergb = light.color * light.intensity;
+				return light.color * light.intensity;
 				break;
 
 			}
-			return Ergb;
-
-
+			return ColorRGB();
 		}
 	}
 

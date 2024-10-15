@@ -63,9 +63,31 @@ void Renderer::Render(Scene* pScene) const
 					float normalizedDistance = LightDirection.Normalize();
 					Ray lightRay{ closestHit.origin + closestHit.normal * 0.0005f, LightDirection, 0.0001f, normalizedDistance };
 
-					ColorRGB Radiance = LightUtils::GetRadiance(light, closestHit.origin);
-					float observedArea = Vector3::Dot(closestHit.normal, -viewRay.direction);
-					ColorRGB BRDF = materials[closestHit.materialIndex]->Shade(closestHit, LightDirection, viewRay.direction);
+
+					ColorRGB Radiance{1,1,1};
+					float observedArea{1};
+					ColorRGB BRDF{1,1,1};
+
+					switch (camera.m_CurrentLightingMode)
+					{
+					case dae::Camera::LightingMode::ObservedArea:
+						observedArea = Vector3::Dot(closestHit.normal, -viewRay.direction);
+						break;
+					case dae::Camera::LightingMode::Radiance:
+						Radiance = LightUtils::GetRadiance(light, closestHit.origin);
+						break;
+					case dae::Camera::LightingMode::BRDF:
+						BRDF = materials[closestHit.materialIndex]->Shade(closestHit, LightDirection, viewRay.direction);
+						break;
+					case dae::Camera::LightingMode::Combined:
+						BRDF = materials[closestHit.materialIndex]->Shade(closestHit, LightDirection, viewRay.direction);
+						Radiance = LightUtils::GetRadiance(light, closestHit.origin);
+						observedArea = Vector3::Dot(closestHit.normal, -viewRay.direction);
+						break;
+					default:
+						break;
+					}
+
 					if (observedArea < 0)
 					{
 						continue;
@@ -73,7 +95,7 @@ void Renderer::Render(Scene* pScene) const
 
 					finalColor += Radiance * observedArea * BRDF;
 
-					if (pScene->DoesHit(lightRay) && m_bShadowEnabled)
+					if (pScene->DoesHit(lightRay) && camera.m_bShadowEnabled)
 					{
 						finalColor *= 0.5f;
 
@@ -103,14 +125,4 @@ bool Renderer::SaveBufferToImage() const
 	return SDL_SaveBMP(m_pBuffer, "RayTracing_Buffer.bmp");
 }
 
-void Renderer::CycleLightingMode()
-{
-	if (m_CurrentLightingMode == LightingMode::Combined)
-	{
-		m_CurrentLightingMode = LightingMode::Combined;
-	}
-	else
-	{
-		m_CurrentLightingMode = static_cast<LightingMode>((int)m_CurrentLightingMode + 1);
-	}
-}
+

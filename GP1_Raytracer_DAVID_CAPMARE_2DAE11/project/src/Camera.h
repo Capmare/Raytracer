@@ -30,6 +30,16 @@ namespace dae
 
 		Matrix cameraToWorld{};
 
+		enum class LightingMode
+		{
+			ObservedArea, //Lambert cosine
+			Radiance, // IncidentRadiance
+			BRDF, // Scattering of the light
+			Combined // Observed area * radiance * BRDF
+		};
+
+		LightingMode m_CurrentLightingMode{ LightingMode::Combined };
+		bool m_bShadowEnabled{ true };
 
 		Matrix CalculateCameraToWorld()
 		{
@@ -59,15 +69,33 @@ namespace dae
 			//todo: W2
 			//throw std::runtime_error("Not Implemented Yet");
 
+			if (pKeyboardState[SDL_SCANCODE_F2])
+			{
+				m_bShadowEnabled = !m_bShadowEnabled;
+			}
+
+			if (pKeyboardState[SDL_SCANCODE_F3])
+			{
+				if (m_CurrentLightingMode == LightingMode::Combined)
+				{
+					m_CurrentLightingMode = LightingMode::ObservedArea;
+				}
+				else
+				{
+					m_CurrentLightingMode = static_cast<LightingMode>((int)m_CurrentLightingMode + 1);
+				}
+			}
 
 			if (mouseState & SDL_BUTTON(3)) 
 			{
+
 				totalPitch -= mouseY * deltaTime;
 				totalYaw -= mouseX * deltaTime;
 
 				forward = Matrix::CreateRotation(Vector3(totalPitch * 4, totalYaw * 4,0)).TransformVector(Vector3::UnitZ);
 				forward = forward.Normalized();
 
+				
 
 				if (pKeyboardState[SDL_SCANCODE_W])
 				{
@@ -93,6 +121,8 @@ namespace dae
 				{
 					origin += up;
 				}
+
+				
 			}
 		}
 	};
