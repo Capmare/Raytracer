@@ -44,10 +44,10 @@ namespace dae
 		Matrix CalculateCameraToWorld()
 		{
 			//todo: W2
-			Vector3 Right = Vector3::Cross(Vector3::UnitY, forward).Normalized();
-			Vector3 Up = Vector3::Cross(forward, right).Normalized();
+			right = Vector3::Cross(Vector3::UnitY, forward).Normalized();
+			up = Vector3::Cross(forward, right).Normalized();
 			return {
-			{Right.x,Right.y,right.z,0},
+			{right.x,right.y,right.z,0},
 			{up.x,up.y,up.z,0},
 			{forward.x,forward.y,forward.z,0},
 			{origin.x,origin.y,origin.z,1}

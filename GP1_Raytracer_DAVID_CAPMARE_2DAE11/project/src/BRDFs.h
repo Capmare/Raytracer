@@ -49,10 +49,10 @@ namespace dae
 			//todo: W3
 
 			Vector3 reflect = l - 2*(Vector3::Dot(n,l))*n;
-			float cosAlpha = Vector3::Dot(reflect.Normalized(), v.Normalized());
+			float cosAlpha = Vector3::Dot(reflect.Normalized(), v);
 			
 
-			return { ColorRGB(1,1,1) * ks * std::max(0.f,pow(cosAlpha,exp))};
+			return { ColorRGB(1,1,1) * ks * abs(powf(cosAlpha,exp)) };
 		}
 
 		/**
@@ -65,8 +65,10 @@ namespace dae
 		static ColorRGB FresnelFunction_Schlick(const Vector3& h, const Vector3& v, const ColorRGB& f0)
 		{
 			//todo: W3
+			Vector3 hvec = h + v;
+			ColorRGB Frgb = f0 + (ColorRGB(1, 1, 1) - f0) * powf((1 - (Vector3::Dot(hvec, v))), 5);
 
-			return {};
+			return {Frgb};
 		}
 
 		/**
@@ -79,8 +81,14 @@ namespace dae
 		static float NormalDistribution_GGX(const Vector3& n, const Vector3& h, float roughness)
 		{
 			//todo: W3
+			float alphaSqr = roughness * roughness;
+			float nvec = Vector3::Dot(n, h);
+			float nvec2 = nvec * nvec;
 
-			return {};
+			float GGX = nvec2 * (alphaSqr -1 ) + 1;
+			GGX = M_PI * GGX * GGX;
+			GGX = alphaSqr / GGX;
+			return { GGX };
 		}
 
 
@@ -94,8 +102,11 @@ namespace dae
 		static float GeometryFunction_SchlickGGX(const Vector3& n, const Vector3& v, float roughness)
 		{
 			//todo: W3
+			float nv = Vector3::Dot(n,v);
+			float k = roughness * roughness;
 
-			return {};
+
+			return {nv / (nv * (1- k) + k)};
 		}
 
 		/**

@@ -46,7 +46,7 @@ void Renderer::Render(Scene* pScene) const
 			const float yNDC = (1 - 2 * ((py + .5f) / m_Height)) * m_FOV;
 			Vector3 rayDirection = {xNDC,yNDC,1.0};
 
-			Ray viewRay = {camera.origin,CameraToWorld.TransformVector(rayDirection) };
+			Ray viewRay = {camera.origin,CameraToWorld.TransformVector(rayDirection).Normalized() };
 
 			HitRecord closestHit{};
 			pScene->GetClosestHit(viewRay,closestHit);
