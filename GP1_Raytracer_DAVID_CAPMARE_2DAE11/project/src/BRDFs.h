@@ -32,7 +32,7 @@ namespace dae
 		{
 			//todo: W3
 
-			return {};
+			return {kd * cd / M_PI };
 		}
 
 		/**
@@ -82,6 +82,7 @@ namespace dae
 		{
 			//todo: W3
 			float alphaSqr = roughness * roughness;
+			alphaSqr *= alphaSqr;
 			float nvec = Vector3::Dot(n, h);
 			float nvec2 = nvec * nvec;
 

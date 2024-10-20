@@ -201,12 +201,12 @@ namespace dae {
 		m_Camera.origin = { .0f, 1.f, -5.f };
 		m_Camera.fovAngle = { 45.f };
 		
-		const auto matCT_GrayRoughMetal = AddMaterial(new Material_CookTorrence({.972f,.960f,.915f},1.f,1.f));
-		const auto matCT_GrayMediumMetal = AddMaterial(new Material_CookTorrence({.972f,.960f,.915f},1.f,.6f));
-		const auto matCT_GraySmoothMetal = AddMaterial(new Material_CookTorrence({.972f,.960f,.915f},1.f,.1f));
-		const auto matCT_GrayRoughPlastic = AddMaterial(new Material_CookTorrence({.75f,.75f,.75f},.0f,1.f));
-		const auto matCT_GrayMediumPlastic = AddMaterial(new Material_CookTorrence({.75f,.75f,.75f},.0f,.6f));
-		const auto matCT_GraySmoothPlastic = AddMaterial(new Material_CookTorrence({.75f,.75f,.75f},.0f,.1f));
+		const auto matCT_GrayRoughMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, 1.f));
+		const auto matCT_GrayMediumMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, .6f));
+		const auto matCT_GraySmoothMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, .1f));
+		const auto matCT_GrayRoughPlastic = AddMaterial(new Material_CookTorrence({ .75f, .75f, .75f }, .0f, 1.f));
+		const auto matCT_GrayMediumPlastic = AddMaterial(new Material_CookTorrence({ .75f, .75f, .75f }, .0f, .6f));
+		const auto matCT_GraySmoothPlastic = AddMaterial(new Material_CookTorrence({ .75f, .75f, .75f }, .0f, .1f));
 		
 		const auto matLamber_GrayBlue = AddMaterial(new Material_Lambert({ .49f,.57f,.57f }, 1.f));
 		// 

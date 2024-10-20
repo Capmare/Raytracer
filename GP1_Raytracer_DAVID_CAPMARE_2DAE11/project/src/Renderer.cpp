@@ -93,13 +93,17 @@ void Renderer::Render(Scene* pScene) const
 						continue;
 					}
 
-					finalColor += Radiance * observedArea * BRDF;
 
 					if (pScene->DoesHit(lightRay) && camera.m_bShadowEnabled)
 					{
 
-						finalColor *= 0.75f;
+						finalColor *= 0.99f;
 					
+					}
+					else
+					{
+						finalColor += Radiance * observedArea * BRDF;
+
 					}
 
 				}
