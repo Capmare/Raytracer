@@ -50,6 +50,7 @@ namespace dae
 		std::vector<TriangleMesh> m_TriangleMeshGeometries{};
 		std::vector<Light> m_Lights{};
 		std::vector<Material*> m_Materials{};
+		std::vector<Triangle> m_Triangles{};
 
 		Camera m_Camera{};
 
@@ -109,5 +110,22 @@ namespace dae
 		void Initialize() override;
 	};
 
+	class Scene_W4 final : public Scene
+	{
+	public:
+		Scene_W4() = default;
+		~Scene_W4() override = default;
 
+		Scene_W4(const Scene_W4&) = delete;
+		Scene_W4(Scene_W4&&) noexcept = delete;
+		Scene_W4& operator=(const Scene_W4&) = delete;
+		Scene_W4& operator=(Scene_W4&&) noexcept = delete;
+
+
+		void Initialize() override;
+		void Update(Timer* pTimer) override;
+
+		TriangleMesh* pMesh{ nullptr };
+
+	};
 }

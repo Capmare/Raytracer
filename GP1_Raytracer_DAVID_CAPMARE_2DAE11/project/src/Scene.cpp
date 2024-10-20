@@ -43,6 +43,11 @@ namespace dae {
 			GeometryUtils::HitTest_Plane(planes, ray, tempHit);
 			closestHit = tempHit.t < closestHit.t ? tempHit : closestHit;
 		}
+		for (const TriangleMesh& Meshes : m_TriangleMeshGeometries)
+		{
+			GeometryUtils::HitTest_TriangleMesh(Meshes, ray, tempHit);
+			closestHit = tempHit.t < closestHit.t ? tempHit : closestHit;
+		}
 		//throw std::runtime_error("Not Implemented Yet");
 	}
 
@@ -62,6 +67,21 @@ namespace dae {
 		for (const Plane& planes : m_PlaneGeometries)
 		{
 			if (GeometryUtils::HitTest_Plane(planes, ray, tempHit))
+			{
+				return true;
+			}
+		}
+		for (const Triangle& triangles : m_Triangles)
+		{
+			if (GeometryUtils::HitTest_Triangle(triangles,ray,tempHit))
+			{
+				return true;
+			}
+		}
+
+		for (const TriangleMesh& Meshes : m_TriangleMeshGeometries)
+		{
+			if (GeometryUtils::HitTest_TriangleMesh(Meshes, ray, tempHit))
 			{
 				return true;
 			}
@@ -227,6 +247,50 @@ namespace dae {
 		AddPointLight({ .0f, 5.f, 5.f }, 50.f, ColorRGB{1.f,.61f,.45f});
 		AddPointLight({ -2.5f, 5.f, -5.f }, 70.f, ColorRGB{1.f,.8f,.45f});
 		AddPointLight({ 2.5f, 2.5f, -5.f }, 50.f, ColorRGB{.34f,.47f,.68f});
+	}
+
+
+
+	void Scene_W4::Initialize()
+	{
+		m_Camera.origin = { .0f, 1.f, -5.f };
+		m_Camera.fovAngle = 45;
+		m_Triangles.reserve(200);
+
+
+		Matrix rotation{ Matrix::CreateRotation(m_Camera.totalPitch, m_Camera.totalYaw, 0) };
+		m_Camera.forward = rotation.TransformVector(Vector3::UnitZ).Normalized();
+
+		const auto matLambert_GrayBlue = AddMaterial(new Material_Lambert({ .49f, .57f, .57f }, 1.f));
+		const auto matLambert_White = AddMaterial(new Material_Lambert(colors::White, 1.f));
+
+		AddPlane(Vector3{ .0f,   .0f, 10.f }, Vector3{ .0f,  .0f, -1.f }, matLambert_GrayBlue);
+		AddPlane(Vector3{ .0f,   .0f,  .0f }, Vector3{ .0f,  1.f,  .0f }, matLambert_GrayBlue);
+		AddPlane(Vector3{ .0f,  10.f,  .0f }, Vector3{ .0f, -1.f,  .0f }, matLambert_GrayBlue);
+		AddPlane(Vector3{ 5.f,   .0f,  .0f }, Vector3{ -1.f,  .0f,  .0f }, matLambert_GrayBlue);
+		AddPlane(Vector3{ -5.f,   .0f,  .0f }, Vector3{ 1.f,  .0f,  .0f }, matLambert_GrayBlue);
+
+		AddPointLight(Vector3{ .0f,  5.f,  5.f }, 50.f, ColorRGB{ 1.f, .61f, .45f }); //Backlight
+		AddPointLight(Vector3{ -2.5f,  5.f, -5.f }, 70.f, ColorRGB{ 1.f,  .8f, .45f }); //Frontlight left
+		AddPointLight(Vector3{ 2.5f, 2.5f, -5.f }, 50.f, ColorRGB{ .34f, .47f, .68f });
+
+		pMesh = AddTriangleMesh(TriangleCullMode::NoCulling, matLambert_White);
+		Utils::ParseOBJ("resources/simple_object.obj",pMesh->positions,pMesh->normals,pMesh->indices);
+
+
+		pMesh->Translate({0.f,1.5f,0.f});
+
+		pMesh->UpdateTransforms();
+
+		//m_Triangles.emplace_back();
+	}
+
+	void Scene_W4::Update(Timer* pTimer)
+	{
+		Scene::Update(pTimer);
+
+		//pMesh->RotateY(4* PI * pTimer->GetTotal());
+		//pMesh->UpdateTransforms();
 	}
 
 }

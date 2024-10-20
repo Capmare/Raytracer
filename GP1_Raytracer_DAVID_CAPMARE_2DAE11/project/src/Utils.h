@@ -79,8 +79,58 @@ namespace dae
 		inline bool HitTest_Triangle(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
 		{
 			//todo W5
-			throw std::runtime_error("Not Implemented Yet");
-			return false;
+			Vector3 a = triangle.v1 - triangle.v0;
+			Vector3 b = triangle.v2 - triangle.v0;
+			Vector3 n = Vector3::Cross(a,b).Normalized();
+
+			float nv = Vector3::Dot(n, ray.direction);
+
+			if ((nv* nv) < (FLT_EPSILON* FLT_EPSILON) ) return false;
+
+			int Direction = (ignoreHitRecord) ? 1 : -1;
+
+			switch (triangle.cullMode)
+			{
+			case TriangleCullMode::FrontFaceCulling:
+				if (nv * Direction > 0) { return false; }
+				break;
+			case TriangleCullMode::BackFaceCulling:
+				if (nv * Direction < 0) { return false; }
+				break;
+			case TriangleCullMode::NoCulling:
+				break;
+
+			}
+
+			Vector3 L = (ray.origin - triangle.v0 );
+
+			float t = Vector3::Dot(L,n) / Vector3::Dot(ray.direction,n);
+			if (t < ray.min || t > ray.max) return false;
+
+			Vector3 P = ray.origin + ray.direction * t;
+
+			Vector3 e0 = triangle.v1 - triangle.v0; 
+			Vector3 p0 = P - triangle.v0;
+			if (Vector3::Dot(Vector3::Cross(e0, p0),n) < 0) return false;
+
+			Vector3 e1 = triangle.v2 - triangle.v1;
+			Vector3 p1 = P - triangle.v1;
+			if (Vector3::Dot(Vector3::Cross(e1, p1), n) < 0) return false;
+
+			Vector3 e2 = triangle.v0 - triangle.v2;
+			Vector3 p2 = P - triangle.v2;
+			if (Vector3::Dot(Vector3::Cross(e2, p2), n) < 0) return false;
+
+			if (!ignoreHitRecord)
+			{
+				hitRecord.didHit = true;
+				hitRecord.materialIndex = triangle.materialIndex;
+				hitRecord.normal = n;
+				hitRecord.origin = P;
+				hitRecord.t = t;
+
+			}
+			return true;
 		}
 
 		inline bool HitTest_Triangle(const Triangle& triangle, const Ray& ray)
@@ -93,8 +143,33 @@ namespace dae
 		inline bool HitTest_TriangleMesh(const TriangleMesh& mesh, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
 		{
 			//todo W5
-			throw std::runtime_error("Not Implemented Yet");
-			return false;
+			Triangle CurrentTri{};
+			HitRecord tempHit;
+
+			for (size_t idx{}; idx < mesh.indices.size(); idx += 3)
+			{
+				
+				CurrentTri = {mesh.transformedPositions[mesh.indices[idx]],mesh.transformedPositions[mesh.indices[idx + 1]],mesh.transformedPositions[mesh.indices[idx + 2]] };
+				CurrentTri.cullMode = mesh.cullMode;
+				CurrentTri.materialIndex = mesh.materialIndex;
+				CurrentTri.normal = mesh.transformedNormals[mesh.indices[idx/3]];
+
+				if (ignoreHitRecord)
+				{
+					if (GeometryUtils::HitTest_Triangle(CurrentTri, ray))
+					{
+						return true;
+					}
+				}
+				else
+				{
+					GeometryUtils::HitTest_Triangle(CurrentTri, ray, hitRecord);
+					hitRecord = tempHit.t < hitRecord.t ? tempHit : hitRecord;
+				}				
+			}
+
+
+			return hitRecord.didHit;
 		}
 
 		inline bool HitTest_TriangleMesh(const TriangleMesh& mesh, const Ray& ray)
