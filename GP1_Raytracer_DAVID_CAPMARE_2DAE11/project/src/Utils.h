@@ -102,7 +102,7 @@ namespace dae
 
 			}
 
-			Vector3 L = (ray.origin - triangle.v0 );
+			Vector3 L = (triangle.v0 - ray.origin);
 
 			float t = Vector3::Dot(L,n) / Vector3::Dot(ray.direction,n);
 			if (t < ray.min || t > ray.max) return false;
