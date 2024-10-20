@@ -65,8 +65,8 @@ namespace dae
 		static ColorRGB FresnelFunction_Schlick(const Vector3& h, const Vector3& v, const ColorRGB& f0)
 		{
 			//todo: W3
-			Vector3 hvec = h + v;
-			ColorRGB Frgb = f0 + (ColorRGB(1, 1, 1) - f0) * powf((1 - (Vector3::Dot(hvec, v))), 5);
+			
+			ColorRGB Frgb = f0 + (ColorRGB(1, 1, 1) - f0) * powf((1 - (Vector3::Dot(h, v))), 5);
 
 			return {Frgb};
 		}
@@ -85,7 +85,7 @@ namespace dae
 			float nvec = Vector3::Dot(n, h);
 			float nvec2 = nvec * nvec;
 
-			float GGX = nvec2 * (alphaSqr -1 ) + 1;
+			float GGX = nvec2 * (alphaSqr - 1) + 1;
 			GGX = M_PI * GGX * GGX;
 			GGX = alphaSqr / GGX;
 			return { GGX };
@@ -102,11 +102,13 @@ namespace dae
 		static float GeometryFunction_SchlickGGX(const Vector3& n, const Vector3& v, float roughness)
 		{
 			//todo: W3
+			//todo: W3
 			float nv = Vector3::Dot(n,v);
-			float k = roughness * roughness;
+			float alphaSqr = (roughness * roughness);
+			float k = ((alphaSqr + 1) * (alphaSqr + 1))/8 ;
 
 
-			return {nv / (nv * (1- k) + k)};
+			return {nv / ((nv * (1- k)) + k)};
 		}
 
 		/**
@@ -121,7 +123,7 @@ namespace dae
 		{
 			//todo: W3
 
-			return {};
+			return { GeometryFunction_SchlickGGX(n,v,roughness) * GeometryFunction_SchlickGGX(n,l,roughness) };
 		}
 
 	}
