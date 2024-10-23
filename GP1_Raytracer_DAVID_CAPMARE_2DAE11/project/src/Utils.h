@@ -86,7 +86,7 @@ namespace dae
 
 			float nv = Vector3::Dot(n, ray.direction);
 
-			if ((nv* nv) < (FLT_EPSILON* FLT_EPSILON) ) return false;
+			if (AreEqual(nv, 0)) return false;;
 
 			int Direction = (ignoreHitRecord) ? 1 : -1;
 
@@ -105,7 +105,7 @@ namespace dae
 
 			Vector3 L = (triangle.v0 - ray.origin);
 
-			float t = Vector3::Dot(L,n) / Vector3::Dot(ray.direction,n);
+			float t = Vector3::Dot(L,n) / nv;
 			if (t < ray.min || t > ray.max) return false;
 
 			Vector3 P = ray.origin + ray.direction * t;
