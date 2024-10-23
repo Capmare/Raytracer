@@ -137,7 +137,6 @@ namespace dae
 		void Initialize() override;
 		void Update(Timer* pTimer) override;
 
-		std::vector<TriangleMesh*> pMesh{ nullptr };
-
+		std::vector<TriangleMesh*> m_meshes = {};
 	};
 }

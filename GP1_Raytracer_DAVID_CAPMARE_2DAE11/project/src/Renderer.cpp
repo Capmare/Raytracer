@@ -99,7 +99,7 @@ void Renderer::Render(Scene* pScene) const
 					if (pScene->DoesHit(lightRay) && pScene->m_bShadowEnabled)
 					{
 
-						finalColor *= 0.5f;
+						finalColor *= 0.99f;
 					
 					}
 					else
