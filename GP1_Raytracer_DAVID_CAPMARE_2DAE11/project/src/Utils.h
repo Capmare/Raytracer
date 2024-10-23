@@ -80,15 +80,15 @@ namespace dae
 		inline bool HitTest_Triangle(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
 		{
 			//todo W5
-			Vector3 a = triangle.v1 - triangle.v0;
-			Vector3 b = triangle.v2 - triangle.v0;
-			Vector3 n = Vector3::Cross(a,b).Normalized();
+			const Vector3 a = triangle.v1 - triangle.v0;
+			const Vector3 b = triangle.v2 - triangle.v0;
+			const Vector3 n = Vector3::Cross(a,b).Normalized();
 
-			float nv = Vector3::Dot(n, ray.direction);
+			const float nv = Vector3::Dot(n, ray.direction);
 
 			if (AreEqual(nv, 0)) return false;;
 
-			int Direction = (ignoreHitRecord) ? 1 : -1;
+			const int Direction = (ignoreHitRecord) ? 1 : -1;
 
 			switch (triangle.cullMode)
 			{
@@ -103,23 +103,23 @@ namespace dae
 
 			}
 
-			Vector3 L = (triangle.v0 - ray.origin);
+			const Vector3 L = triangle.v0 - ray.origin;
 
-			float t = Vector3::Dot(L,n) / nv;
+			const float t = Vector3::Dot(L,n) / nv;
 			if (t < ray.min || t > ray.max) return false;
 
-			Vector3 P = ray.origin + ray.direction * t;
+			const Vector3 P = ray.origin + ray.direction * t;
 
-			Vector3 e0 = triangle.v1 - triangle.v0; 
-			Vector3 p0 = P - triangle.v0;
+			const Vector3 e0 = triangle.v1 - triangle.v0; 
+			const Vector3 p0 = P - triangle.v0;
 			if (Vector3::Dot(Vector3::Cross(e0, p0),n) < 0) return false;
 
-			Vector3 e1 = triangle.v2 - triangle.v1;
-			Vector3 p1 = P - triangle.v1;
+			const Vector3 e1 = triangle.v2 - triangle.v1;
+			const Vector3 p1 = P - triangle.v1;
 			if (Vector3::Dot(Vector3::Cross(e1, p1), n) < 0) return false;
 
-			Vector3 e2 = triangle.v0 - triangle.v2;
-			Vector3 p2 = P - triangle.v2;
+			const Vector3 e2 = triangle.v0 - triangle.v2;
+			const Vector3 p2 = P - triangle.v2;
 			if (Vector3::Dot(Vector3::Cross(e2, p2), n) < 0) return false;
 
 			if (!ignoreHitRecord)
@@ -148,8 +148,6 @@ namespace dae
 			HitRecord tempHit;
 			if (mesh.indices.empty())
 			{
-				std::cout << "Indices empty";
-
 				return false;
 			}
 			for (size_t idx{}; idx < mesh.indices.size(); idx += 3)

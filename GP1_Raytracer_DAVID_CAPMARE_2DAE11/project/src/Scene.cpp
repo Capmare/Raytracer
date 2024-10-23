@@ -257,7 +257,7 @@ namespace dae {
 		m_Camera.origin = { .0f, 4.f, -5.f };
 		m_Camera.fovAngle = 45;
 		//m_Triangles.reserve(200);
-		Matrix rotation{ Matrix::CreateRotation(m_Camera.totalPitch, m_Camera.totalYaw, 0) };
+		const Matrix rotation{ Matrix::CreateRotation(m_Camera.totalPitch, m_Camera.totalYaw, 0) };
 		m_Camera.forward = rotation.TransformVector(Vector3::UnitZ).Normalized();
 
 
@@ -281,7 +281,7 @@ namespace dae {
 		
 		pMeshs->UpdateTransforms();
 
-
+		m_meshes.emplace_back(pMeshs);
 		//const auto matCT_GrayRoughMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, 1.f));
 		//const auto matCT_GrayMediumMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, .6f));
 		//const auto matCT_GraySmoothMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, .1f));
@@ -334,12 +334,14 @@ namespace dae {
 	{
 		Scene::Update(pTimer);
 
-		//const float yawAngle{ ((cos(pTimer->GetTotal()) + 1.f) / 2.f * PI_2) };
-		//for (TriangleMesh* m : m_meshes)
-		//{
-		//	m->RotateY(yawAngle);
-		//	m->UpdateTransforms();
-		//}
+		const float yawAngle{ ((cos(pTimer->GetTotal()) + 1.f) / 2.f * PI_2 * PI_2) };
+
+
+		for (TriangleMesh* m : m_meshes)
+		{
+			m->RotateY(yawAngle);
+			m->UpdateTransforms();
+		}
 	}
 
 }

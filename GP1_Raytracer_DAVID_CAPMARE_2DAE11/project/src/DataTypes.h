@@ -130,9 +130,9 @@ namespace dae
 			for (size_t idx{}; idx < indices.size(); idx += 3)
 			{
 				
-				Vector3 a = positions[indices[idx + 1]] - positions[indices[idx]];
-				Vector3 b = positions[indices[idx + 2]] - positions[indices[idx]];
-				Vector3 n = Vector3::Cross(a,b).Normalized();
+				const Vector3 a = positions[indices[idx + 1]] - positions[indices[idx]];
+				const Vector3 b = positions[indices[idx + 2]] - positions[indices[idx]];
+				const Vector3 n = Vector3::Cross(a,b).Normalized();
 
 				normals.emplace_back(n);
 			}
