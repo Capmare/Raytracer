@@ -147,7 +147,7 @@ namespace dae
 		{
 			//todo W5
 			Triangle CurrentTri{};
-			HitRecord tempHit;
+			HitRecord tempHit{};
 			
 			for (size_t idx{0}; idx < mesh.indices.size(); idx += 3)
 			{
@@ -164,8 +164,9 @@ namespace dae
 				else
 				{
 					GeometryUtils::HitTest_Triangle(CurrentTri, ray, hitRecord);
+					
 					hitRecord = tempHit.t < hitRecord.t ? tempHit : hitRecord;
-
+					
 				}				
 			}
 
