@@ -264,11 +264,11 @@ namespace dae {
 		const auto matLambert_GrayBlue = AddMaterial(new Material_Lambert({ .49f, .57f, .57f }, 1.f));
 		const auto matLambert_White = AddMaterial(new Material_Lambert(colors::White, 1.f));
 		
-		AddPlane(Vector3{ .0f,   .0f, 10.f }, Vector3{ .0f,  .0f, -1.f }, matLambert_GrayBlue);
-		AddPlane(Vector3{ .0f,   .0f,  .0f }, Vector3{ .0f,  1.f,  .0f }, matLambert_GrayBlue);
-		AddPlane(Vector3{ .0f,  10.f,  .0f }, Vector3{ .0f, -1.f,  .0f }, matLambert_GrayBlue);
-		AddPlane(Vector3{ 5.f,   .0f,  .0f }, Vector3{ -1.f,  .0f,  .0f }, matLambert_GrayBlue);
-		AddPlane(Vector3{ -5.f,   .0f,  .0f }, Vector3{ 1.f,  .0f,  .0f }, matLambert_GrayBlue);
+		//AddPlane(Vector3{ .0f,   .0f, 10.f }, Vector3{ .0f,  .0f, -1.f }, matLambert_GrayBlue);
+		//AddPlane(Vector3{ .0f,   .0f,  .0f }, Vector3{ .0f,  1.f,  .0f }, matLambert_GrayBlue);
+		//AddPlane(Vector3{ .0f,  10.f,  .0f }, Vector3{ .0f, -1.f,  .0f }, matLambert_GrayBlue);
+		//AddPlane(Vector3{ 5.f,   .0f,  .0f }, Vector3{ -1.f,  .0f,  .0f }, matLambert_GrayBlue);
+		//AddPlane(Vector3{ -5.f,   .0f,  .0f }, Vector3{ 1.f,  .0f,  .0f }, matLambert_GrayBlue);
 		
 		AddPointLight(Vector3{ .0f,  5.f,  5.f }, 50.f, ColorRGB{ 1.f, .61f, .45f }); //Backlight
 		AddPointLight(Vector3{ -2.5f,  5.f, -5.f }, 70.f, ColorRGB{ 1.f,  .8f, .45f }); //Frontlight left
@@ -282,6 +282,8 @@ namespace dae {
 		pMeshs->UpdateTransforms();
 
 		m_meshes.emplace_back(pMeshs);
+
+
 		//const auto matCT_GrayRoughMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, 1.f));
 		//const auto matCT_GrayMediumMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, .6f));
 		//const auto matCT_GraySmoothMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, .1f));
@@ -334,14 +336,14 @@ namespace dae {
 	{
 		Scene::Update(pTimer);
 
-		const float yawAngle{ ((cos(pTimer->GetTotal()) + 1.f) / 2.f * PI_2 * PI_2) };
-
-
-		for (TriangleMesh* m : m_meshes)
-		{
-			m->RotateY(yawAngle);
-			m->UpdateTransforms();
-		}
+		//const float yawAngle{ ((cos(pTimer->GetTotal()) + 1.f) / 2.f * PI_2 * PI_2) };
+		//
+		//
+		//for (TriangleMesh* m : m_meshes)
+		//{
+		//	m->RotateY(yawAngle);
+		//	m->UpdateTransforms();
+		//}
 	}
 
 }

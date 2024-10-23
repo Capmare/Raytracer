@@ -147,7 +147,7 @@ namespace dae
 			transformedNormals.clear();
 			transformedNormals.reserve(size_t(normals.size()));
 
-			const auto finalTransform = rotationTransform * translationTransform * scaleTransform;
+			const auto finalTransform = translationTransform * rotationTransform  * scaleTransform;
 
 			for (const auto& pos : positions)
 			{

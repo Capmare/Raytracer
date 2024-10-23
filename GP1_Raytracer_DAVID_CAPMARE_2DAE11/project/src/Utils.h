@@ -86,7 +86,7 @@ namespace dae
 
 			const float nv = Vector3::Dot(n, ray.direction);
 
-			if (AreEqual(nv, 0)) return false;;
+			if (AreEqual(nv, 0)) return false;
 
 			const int Direction = (ignoreHitRecord) ? 1 : -1;
 
@@ -112,6 +112,7 @@ namespace dae
 
 			const Vector3 e0 = triangle.v1 - triangle.v0; 
 			const Vector3 p0 = P - triangle.v0;
+
 			if (Vector3::Dot(Vector3::Cross(e0, p0),n) < 0) return false;
 
 			const Vector3 e1 = triangle.v2 - triangle.v1;
@@ -131,6 +132,7 @@ namespace dae
 				hitRecord.t = t;
 
 			}
+
 			return true;
 		}
 
@@ -146,28 +148,24 @@ namespace dae
 			//todo W5
 			Triangle CurrentTri{};
 			HitRecord tempHit;
-			if (mesh.indices.empty())
+			
+			for (size_t idx{0}; idx < mesh.indices.size(); idx += 3)
 			{
-				return false;
-			}
-			for (size_t idx{}; idx < mesh.indices.size(); idx += 3)
-			{
-				CurrentTri = {mesh.transformedPositions[mesh.indices[idx]],mesh.transformedPositions[mesh.indices[idx + 1]],mesh.transformedPositions[mesh.indices[idx + 2]] };
-				CurrentTri.cullMode = mesh.cullMode;
+				
+				CurrentTri = { mesh.transformedPositions[mesh.indices[idx]],mesh.transformedPositions[mesh.indices[idx + 1]],mesh.transformedPositions[mesh.indices[idx + 2]] };
 				CurrentTri.materialIndex = mesh.materialIndex;
 				CurrentTri.normal = mesh.transformedNormals[mesh.indices[idx/3]];
+				CurrentTri.cullMode = mesh.cullMode;
 
 				if (ignoreHitRecord)
 				{
-					if (GeometryUtils::HitTest_Triangle(CurrentTri, ray))
-					{
-						return true;
-					}
+					return GeometryUtils::HitTest_Triangle(CurrentTri, ray);
 				}
 				else
 				{
 					GeometryUtils::HitTest_Triangle(CurrentTri, ray, hitRecord);
 					hitRecord = tempHit.t < hitRecord.t ? tempHit : hitRecord;
+
 				}				
 			}
 
