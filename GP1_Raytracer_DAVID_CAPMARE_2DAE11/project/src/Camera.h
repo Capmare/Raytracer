@@ -66,8 +66,8 @@ namespace dae
 			if (mouseState & SDL_BUTTON(3)) 
 			{
 
-				totalPitch -= mouseY * deltaTime;
-				totalYaw -= mouseX * deltaTime;
+				totalPitch += mouseY * deltaTime;
+				totalYaw += mouseX * deltaTime;
 
 				forward = Matrix::CreateRotation(Vector3(totalPitch * 4, totalYaw * 4,0)).TransformVector(Vector3::UnitZ);
 				forward = forward.Normalized();
