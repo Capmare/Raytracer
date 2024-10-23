@@ -1,4 +1,4 @@
-git add .#pragma once
+#pragma once
 
 #include <cstdint>
 
