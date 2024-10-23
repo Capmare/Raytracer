@@ -15,6 +15,14 @@ namespace dae
 	struct Sphere;
 	struct Light;
 
+	enum class LightingMode
+	{
+		ObservedArea, //Lambert cosine
+		Radiance, // IncidentRadiance
+		BRDF, // Scattering of the light
+		Combined // Observed area * radiance * BRDF
+	};
+
 	//Scene Base Class
 	class Scene
 	{
@@ -41,6 +49,10 @@ namespace dae
 		const std::vector<Sphere>& GetSphereGeometries() const { return m_SphereGeometries; }
 		const std::vector<Light>& GetLights() const { return m_Lights; }
 		const std::vector<Material*> GetMaterials() const { return m_Materials; }
+
+		LightingMode m_CurrentLightingMode{ LightingMode::Combined };
+		bool m_bShadowEnabled{ true };
+
 
 	protected:
 		std::string	sceneName;

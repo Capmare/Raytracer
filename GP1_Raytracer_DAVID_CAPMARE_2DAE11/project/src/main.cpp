@@ -22,6 +22,10 @@ void ShutDown(SDL_Window* pWindow)
 	SDL_Quit();
 }
 
+
+
+
+
 int main(int argc, char* args[])
 {
 	//Unreferenced parameters
@@ -59,6 +63,9 @@ int main(int argc, char* args[])
 	float printTimer = 0.f;
 	bool isLooping = true;
 	bool takeScreenshot = false;
+
+
+
 	while (isLooping)
 	{
 		//--------- Get input events ---------
@@ -73,9 +80,33 @@ int main(int argc, char* args[])
 			case SDL_KEYUP:
 				if (e.key.keysym.scancode == SDL_SCANCODE_X)
 					takeScreenshot = true;
+
+				if (e.key.keysym.scancode == SDL_SCANCODE_F2)
+				{
+					pScene->m_bShadowEnabled = !pScene->m_bShadowEnabled;
+				}
+
+				if (e.key.keysym.scancode == SDL_SCANCODE_F3)
+				{
+					if (pScene->m_CurrentLightingMode == LightingMode::Combined)
+					{
+						pScene->m_CurrentLightingMode = LightingMode::ObservedArea;
+					}
+					else
+					{
+						pScene->m_CurrentLightingMode = static_cast<LightingMode>((int)pScene->m_CurrentLightingMode + 1);
+					}
+				}
+
 				break;
 			}
+
+
+			
 		}
+
+
+		
 
 		//--------- Update ---------
 		pScene->Update(pTimer);

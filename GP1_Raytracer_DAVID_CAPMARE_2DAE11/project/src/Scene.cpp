@@ -253,6 +253,8 @@ namespace dae {
 
 	void Scene_W4::Initialize()
 	{
+
+
 		m_Camera.origin = { .0f, 1.f, -5.f };
 		m_Camera.fovAngle = 45;
 		//m_Triangles.reserve(200);

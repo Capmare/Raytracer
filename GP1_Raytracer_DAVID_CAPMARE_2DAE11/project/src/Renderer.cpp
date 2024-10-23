@@ -68,18 +68,20 @@ void Renderer::Render(Scene* pScene) const
 					float observedArea{1};
 					ColorRGB BRDF{1,1,1};
 
-					switch (camera.m_CurrentLightingMode)
+
+					
+					switch (pScene->m_CurrentLightingMode)
 					{
-					case dae::Camera::LightingMode::ObservedArea:
+					case LightingMode::ObservedArea:
 						observedArea = Vector3::Dot(closestHit.normal, LightDirection);
 						break;
-					case dae::Camera::LightingMode::Radiance:
+					case LightingMode::Radiance:
 						Radiance = LightUtils::GetRadiance(light, closestHit.origin);
 						break;
-					case dae::Camera::LightingMode::BRDF:
+					case LightingMode::BRDF:
 						BRDF = materials[closestHit.materialIndex]->Shade(closestHit, LightDirection, -viewRay.direction);
 						break;
-					case dae::Camera::LightingMode::Combined:
+					case LightingMode::Combined:
 						BRDF = materials[closestHit.materialIndex]->Shade(closestHit, LightDirection, -viewRay.direction);
 						Radiance = LightUtils::GetRadiance(light, closestHit.origin);
 						observedArea = Vector3::Dot(closestHit.normal, LightDirection);
@@ -94,7 +96,7 @@ void Renderer::Render(Scene* pScene) const
 					}
 
 
-					if (pScene->DoesHit(lightRay) && camera.m_bShadowEnabled)
+					if (pScene->DoesHit(lightRay) && pScene->m_bShadowEnabled)
 					{
 
 						finalColor *= 0.5f;
