@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
 #include "Maths.h"
+#include <iostream>
 #include "DataTypes.h"
 
 namespace dae
@@ -145,10 +146,14 @@ namespace dae
 			//todo W5
 			Triangle CurrentTri{};
 			HitRecord tempHit;
+			if (mesh.indices.empty())
+			{
+				std::cout << "Indices empty";
 
+				return false;
+			}
 			for (size_t idx{}; idx < mesh.indices.size(); idx += 3)
 			{
-				
 				CurrentTri = {mesh.transformedPositions[mesh.indices[idx]],mesh.transformedPositions[mesh.indices[idx + 1]],mesh.transformedPositions[mesh.indices[idx + 2]] };
 				CurrentTri.cullMode = mesh.cullMode;
 				CurrentTri.materialIndex = mesh.materialIndex;
