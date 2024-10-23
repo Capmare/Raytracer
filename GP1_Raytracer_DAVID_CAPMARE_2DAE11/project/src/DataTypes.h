@@ -142,16 +142,16 @@ namespace dae
 		{
 			
 			transformedPositions.clear();
-			transformedPositions.reserve(size_t(positions.size()));
+			transformedPositions.reserve(positions.size());
 
 			transformedNormals.clear();
-			transformedNormals.reserve(size_t(normals.size()));
+			transformedNormals.reserve(normals.size());
 
-			const auto finalTransform = translationTransform * rotationTransform  * scaleTransform;
+			const auto finalTransform = rotationTransform * translationTransform * scaleTransform;
 
 			for (const auto& pos : positions)
 			{
-				 transformedPositions.emplace_back(finalTransform.TransformPoint(pos));
+				transformedPositions.emplace_back(finalTransform.TransformPoint(pos));
 			}
 
 			for (const auto& norm : normals)

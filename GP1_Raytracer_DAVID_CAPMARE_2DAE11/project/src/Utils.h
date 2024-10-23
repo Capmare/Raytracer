@@ -153,21 +153,22 @@ namespace dae
 			{
 				
 				CurrentTri = { mesh.transformedPositions[mesh.indices[idx]],mesh.transformedPositions[mesh.indices[idx + 1]],mesh.transformedPositions[mesh.indices[idx + 2]] };
-				CurrentTri.materialIndex = mesh.materialIndex;
 				CurrentTri.normal = mesh.transformedNormals[mesh.indices[idx/3]];
 				CurrentTri.cullMode = mesh.cullMode;
+				CurrentTri.materialIndex = mesh.materialIndex;
 
-				if (ignoreHitRecord)
+				if (HitTest_Triangle(CurrentTri, ray, tempHit, ignoreHitRecord))
 				{
-					return GeometryUtils::HitTest_Triangle(CurrentTri, ray);
+					if (ignoreHitRecord)
+					{
+						return true;
+					}
+
+					if (tempHit.t < hitRecord.t)
+					{
+						hitRecord = tempHit;
+					}
 				}
-				else
-				{
-					GeometryUtils::HitTest_Triangle(CurrentTri, ray, hitRecord);
-					
-					hitRecord = tempHit.t < hitRecord.t ? tempHit : hitRecord;
-					
-				}				
 			}
 
 
