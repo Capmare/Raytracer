@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+
+
 struct SDL_Window;
 struct SDL_Surface;
 
@@ -21,6 +23,7 @@ namespace dae
 		Renderer& operator=(Renderer&&) noexcept = delete;
 
 		void Render(Scene* pScene) const;
+		void RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float aspectRatio, const struct Matrix cameraToWorld, const struct Vector3 cameraOrigin) const;
 		bool SaveBufferToImage() const;
 
 
