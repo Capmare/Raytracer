@@ -22,7 +22,7 @@ namespace dae
 				kd = 0;
 			}
 
-			ColorRGB rho = cd * kd;
+			const ColorRGB rho = cd * kd;
 			
 
 			return { rho / M_PI };
@@ -48,8 +48,8 @@ namespace dae
 		{
 			//todo: W3
 
-			Vector3 reflect = l - 2*(Vector3::Dot(n,l))*n;
-			float cosAlpha = Vector3::Dot(reflect.Normalized(), v);
+			const Vector3 reflect = l - 2*(Vector3::Dot(n,l))*n;
+			const float cosAlpha = Vector3::Dot(reflect.Normalized(), v);
 			
 
 			return { ColorRGB(1,1,1) * ks * abs(powf(cosAlpha,exp)) };
@@ -64,11 +64,7 @@ namespace dae
 		 */
 		static ColorRGB FresnelFunction_Schlick(const Vector3& h, const Vector3& v, const ColorRGB& f0)
 		{
-			//todo: W3
-			
-			ColorRGB Frgb = f0 + (ColorRGB(1, 1, 1) - f0) * powf((1 - (Vector3::Dot(h, v))), 5);
-
-			return {Frgb};
+			return { f0 + (ColorRGB(1, 1, 1) - f0) * powf((1 - (Vector3::Dot(h, v))), 5) };
 		}
 
 		/**
@@ -83,8 +79,8 @@ namespace dae
 			//todo: W3
 			float alphaSqr = roughness * roughness;
 			alphaSqr *= alphaSqr;
-			float nvec = Vector3::Dot(n, h);
-			float nvec2 = nvec * nvec;
+			const float nvec = Vector3::Dot(n, h);
+			const float nvec2 = nvec * nvec;
 
 			float GGX = nvec2 * (alphaSqr - 1) + 1;
 			GGX = M_PI * GGX * GGX;
@@ -104,9 +100,9 @@ namespace dae
 		{
 			//todo: W3
 			//todo: W3
-			float nv = Vector3::Dot(n,v);
-			float alphaSqr = (roughness * roughness);
-			float k = ((alphaSqr + 1) * (alphaSqr + 1))/8 ;
+			const float nv = Vector3::Dot(n,v);
+			const float alphaSqr = (roughness * roughness);
+			const float k = ((alphaSqr + 1) * (alphaSqr + 1))/8 ;
 
 
 			return {nv / ((nv * (1- k)) + k)};

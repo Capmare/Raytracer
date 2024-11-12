@@ -109,10 +109,10 @@ namespace dae
 		{
 			//todo: W3
 
-			Vector3 halfVector = (l + v).Normalized();
+			const Vector3 halfVector = (l + v).Normalized();
 
-			ColorRGB F0 = (m_Metalness == 0) ? ColorRGB(0.04,0.04,0.04) : m_Albedo; 
-			ColorRGB Fresnel = BRDF::FresnelFunction_Schlick(halfVector, v, F0);
+			const ColorRGB F0 = (m_Metalness == 0) ? ColorRGB(0.04,0.04,0.04) : m_Albedo; 
+			const ColorRGB Fresnel = BRDF::FresnelFunction_Schlick(halfVector, v, F0);
 
 			ColorRGB kd{ colors::White - Fresnel};
 
@@ -121,9 +121,9 @@ namespace dae
 				kd = {0,0,0};
 			}
 
-			float NormalDistr = BRDF::NormalDistribution_GGX(hitRecord.normal, halfVector,m_Roughness);
-			float Smith = BRDF::GeometryFunction_Smith(hitRecord.normal,v,l,m_Roughness);
-			ColorRGB DFG = Fresnel * NormalDistr * Smith; 
+			const float NormalDistr = BRDF::NormalDistribution_GGX(hitRecord.normal, halfVector,m_Roughness);
+			const float Smith = BRDF::GeometryFunction_Smith(hitRecord.normal,v,l,m_Roughness);
+			const ColorRGB DFG = Fresnel * NormalDistr * Smith; 
 
 			ColorRGB EndColor = DFG / (4 * (Vector3::Dot(v, hitRecord.normal)) * Vector3::Dot(l, hitRecord.normal)) + BRDF::Lambert(kd, m_Albedo);
 

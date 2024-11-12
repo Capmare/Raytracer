@@ -39,8 +39,8 @@ void Renderer::Render(Scene* pScene) const
 
 
 
-	Matrix cameraToWorld = camera.CalculateCameraToWorld();
-	uint32_t ammountOfPixels{ uint32_t(m_Width * m_Height) };
+	const Matrix cameraToWorld = camera.CalculateCameraToWorld();
+	const uint32_t ammountOfPixels{ uint32_t(m_Width * m_Height) };
 
 #ifdef PARALLEL_EXECUTION
 	//parallel
@@ -76,13 +76,13 @@ void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float 
 
 	const uint32_t px{ pixelIndex % m_Width }, py{ pixelIndex / m_Width };
 
-	float rx{ px + 0.5f }, ry{ py + 0.5f };
-	float cx{ (2 * (rx / float(m_Width)) - 1) * aspectRatio * fov };
-	float cy{ (1 - (2 * (ry / float(m_Height)))) * fov };
+	const float rx{ px + 0.5f }, ry{ py + 0.5f };
+	const float cx{ (2 * (rx / float(m_Width)) - 1) * aspectRatio * fov };
+	const float cy{ (1 - (2 * (ry / float(m_Height)))) * fov };
 
-	Vector3 rayDirection = { cx,cy,1.0 };
+	const Vector3 rayDirection = { cx,cy,1.0 };
 
-	Ray viewRay = { cameraOrigin,cameraToWorld.TransformVector(rayDirection).Normalized() };
+	const Ray viewRay = { cameraOrigin,cameraToWorld.TransformVector(rayDirection).Normalized() };
 
 	HitRecord closestHit{};
 	pScene->GetClosestHit(viewRay, closestHit);
@@ -96,8 +96,8 @@ void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float 
 		{
 
 			Vector3 LightDirection = LightUtils::GetDirectionToLight(light, closestHit.origin);
-			float normalizedDistance = LightDirection.Normalize();
-			Ray lightRay{ closestHit.origin + closestHit.normal * 0.0005f, LightDirection, 0.0001f, normalizedDistance };
+			const float normalizedDistance = LightDirection.Normalize();
+			const Ray lightRay{ closestHit.origin + closestHit.normal * 0.0005f, LightDirection, 0.0001f, normalizedDistance };
 
 
 			ColorRGB Radiance{ 1,1,1 };
