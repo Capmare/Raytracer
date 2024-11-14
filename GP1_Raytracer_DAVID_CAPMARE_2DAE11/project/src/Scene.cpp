@@ -321,12 +321,13 @@ namespace dae {
 		{
 			m->RotateY(yawAngle);
 			m->UpdateTransforms();
+			m->UpdateAABB();
 		}
 	}
 
 	void Scene_W4_Bunny::Initialize()
 	{
-		m_Camera.origin = { .0f, 1.f, -5.f };
+		m_Camera.origin = { .0f, 5.f, -5.f };
 		m_Camera.fovAngle = 45;
 		//m_Triangles.reserve(200);
 		const Matrix rotation{ Matrix::CreateRotation(m_Camera.totalPitch, m_Camera.totalYaw, 0) };
@@ -357,6 +358,7 @@ namespace dae {
 		AddPointLight({ .0f, 5.f, 5.f }, 50.f, ColorRGB{ 1.f,.61f,.45f });
 		AddPointLight({ -2.5f, 5.f, -5.f }, 70.f, ColorRGB{ 1.f,.8f,.45f });
 		AddPointLight({ 2.5f, 2.5f, -5.f }, 50.f, ColorRGB{ .34f,.47f,.68f });
+
 	}
 
 	void Scene_W4_Bunny::Update(Timer* pTimer)
@@ -365,6 +367,8 @@ namespace dae {
 
 		m_mesh->RotateY(yawAngle);
 		m_mesh->UpdateTransforms();
+		m_mesh->UpdateAABB();
+
 	}
 
 }

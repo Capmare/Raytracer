@@ -14,7 +14,7 @@
 #include "Renderer.h"
 #include "Scene.h"
 
-//#define USE_BUNNY 
+//#define USE_BUNNY  //uncomment so that you can use the bunny scene
 
 using namespace dae;
 
