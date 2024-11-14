@@ -327,7 +327,7 @@ namespace dae {
 
 	void Scene_W4_Bunny::Initialize()
 	{
-		m_Camera.origin = { .0f, 5.f, -5.f };
+		m_Camera.origin = { .0f, 1.f, -5.f };
 		m_Camera.fovAngle = 45;
 		//m_Triangles.reserve(200);
 		const Matrix rotation{ Matrix::CreateRotation(m_Camera.totalPitch, m_Camera.totalYaw, 0) };

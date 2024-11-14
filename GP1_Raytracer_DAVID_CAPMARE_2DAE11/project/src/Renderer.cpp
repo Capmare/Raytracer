@@ -125,7 +125,6 @@ void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float 
 					shadowFactor += 1.0f;
 				}
 			}
-
 			shadowFactor /= numShadowSamples;
 
 #endif // SOFT_SHADOWS
@@ -167,7 +166,7 @@ void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float 
 			}
 			else
 			{
-				finalColor += Radiance * observedArea * BRDF * shadowFactor;
+				finalColor += Radiance * observedArea * BRDF;
 			}
 #endif // _DEBUG
 			
