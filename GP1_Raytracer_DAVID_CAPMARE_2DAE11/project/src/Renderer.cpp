@@ -111,7 +111,6 @@ void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float 
 
 			const float lightRadius = .1f;
 			const int numShadowSamples = 3;
-			float totalWeight = 0.0f;
 
 			for (int i = 0; i < numShadowSamples; ++i)
 			{
@@ -125,17 +124,9 @@ void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float 
 				{
 					shadowFactor += 1.0f;
 				}
-
-
-				float weight = exp(-0.5f * pow(distanceToLight / lightRadius, 2));
-				shadowFactor += (pScene->DoesHit(lightRay) ? 0.0f : 1.0f) * weight;
-				totalWeight += weight;
-
 			}
 
-			shadowFactor /= totalWeight;
-			
-
+			shadowFactor /= numShadowSamples;
 
 #endif // SOFT_SHADOWS
 
