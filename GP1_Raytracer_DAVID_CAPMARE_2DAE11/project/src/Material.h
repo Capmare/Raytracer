@@ -108,7 +108,7 @@ namespace dae
 		ColorRGB Shade(const HitRecord& hitRecord = {}, const Vector3& l = {}, const Vector3& v = {}) override
 		{
 			//todo: W3
-
+			
 			const Vector3 halfVector = (l + v).Normalized();
 
 			const ColorRGB F0 = (m_Metalness == 0) ? ColorRGB(0.04,0.04,0.04) : m_Albedo; 

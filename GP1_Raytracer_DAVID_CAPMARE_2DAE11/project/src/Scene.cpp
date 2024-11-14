@@ -324,4 +324,47 @@ namespace dae {
 		}
 	}
 
+	void Scene_W4_Bunny::Initialize()
+	{
+		m_Camera.origin = { .0f, 1.f, -5.f };
+		m_Camera.fovAngle = 45;
+		//m_Triangles.reserve(200);
+		const Matrix rotation{ Matrix::CreateRotation(m_Camera.totalPitch, m_Camera.totalYaw, 0) };
+		m_Camera.forward = rotation.TransformVector(Vector3::UnitZ).Normalized();
+
+
+
+		const auto matCT_GrayRoughMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, 1.f));
+		const auto matCT_GrayMediumMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, .6f));
+		const auto matCT_GraySmoothMetal = AddMaterial(new Material_CookTorrence({ .972f, .960f, .915f }, 1.f, .1f));
+		const auto matCT_GrayRoughPlastic = AddMaterial(new Material_CookTorrence({ .75f, .75f, .75f }, .0f, 1.f));
+		const auto matCT_GrayMediumPlastic = AddMaterial(new Material_CookTorrence({ .75f, .75f, .75f }, .0f, .6f));
+		const auto matCT_GraySmoothPlastic = AddMaterial(new Material_CookTorrence({ .75f, .75f, .75f }, .0f, .1f));
+
+		const auto matLamber_GrayBlue = AddMaterial(new Material_Lambert({ .49f,.57f,.57f }, 1.f));
+		const auto matLamber_White = AddMaterial(new Material_Lambert(colors::White, 1.f));
+		// 
+		AddPlane(Vector3{ 0.f,0.f,10.f }, Vector3{ 0.f,0.f,-1.f }, matLamber_GrayBlue);
+		AddPlane(Vector3{ 0.f,0.f,0.f }, Vector3{ 0.f,1.f,0.f }, matLamber_GrayBlue);
+		AddPlane(Vector3{ 0.f,10.f,0.f }, Vector3{ 0.f,-1.f,0.f }, matLamber_GrayBlue);
+		AddPlane(Vector3{ 5.f,0.f,0.f }, Vector3{ -1.f,0.f,0.f }, matLamber_GrayBlue);
+		AddPlane(Vector3{ -5.f,0.f,0.f }, Vector3{ 1.f,0.f,0.f }, matLamber_GrayBlue);
+
+		m_mesh = AddTriangleMesh(TriangleCullMode::BackFaceCulling, matLamber_White);
+		Utils::ParseOBJ("resources/lowpoly_bunny.obj", m_mesh->positions, m_mesh->normals, m_mesh->indices);
+
+
+		AddPointLight({ .0f, 5.f, 5.f }, 50.f, ColorRGB{ 1.f,.61f,.45f });
+		AddPointLight({ -2.5f, 5.f, -5.f }, 70.f, ColorRGB{ 1.f,.8f,.45f });
+		AddPointLight({ 2.5f, 2.5f, -5.f }, 50.f, ColorRGB{ .34f,.47f,.68f });
+	}
+
+	void Scene_W4_Bunny::Update(Timer* pTimer)
+	{
+		const float yawAngle{ ((cos(pTimer->GetTotal()) + 1.f) / 2.f * PI_2 * PI_2) };
+
+		m_mesh->RotateY(yawAngle);
+		m_mesh->UpdateTransforms();
+	}
+
 }
