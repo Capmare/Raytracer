@@ -14,6 +14,7 @@
 #include <algorithm>
 
 #define PARALLEL_EXECUTION
+#define SOFT_SHADOWS
 
 using namespace dae;
 
@@ -104,6 +105,40 @@ void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float 
 			float observedArea{ 1 };
 			ColorRGB BRDF{ 1,1,1 };
 
+			float shadowFactor = 1.0f;
+
+#ifdef SOFT_SHADOWS
+
+			const float lightRadius = .1f;
+			const int numShadowSamples = 3;
+			float totalWeight = 0.0f;
+
+			for (int i = 0; i < numShadowSamples; ++i)
+			{
+				Vector3 randomizedLightPosition = LightUtils::GetRandomPointNearLight(light, lightRadius);
+
+				Vector3 lightDirection = (randomizedLightPosition - closestHit.origin).Normalized();
+				float distanceToLight = (randomizedLightPosition - closestHit.origin).Magnitude();
+				Ray lightRay(closestHit.origin + closestHit.normal * 0.0005f, lightDirection, 0.0001f, distanceToLight);
+
+				if (!pScene->DoesHit(lightRay))
+				{
+					shadowFactor += 1.0f;
+				}
+
+
+				float weight = exp(-0.5f * pow(distanceToLight / lightRadius, 2));
+				shadowFactor += (pScene->DoesHit(lightRay) ? 0.0f : 1.0f) * weight;
+				totalWeight += weight;
+
+			}
+
+			shadowFactor /= totalWeight;
+			
+
+
+#endif // SOFT_SHADOWS
+
 
 
 			switch (pScene->m_CurrentLightingMode)
@@ -132,23 +167,24 @@ void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float 
 				continue;
 			}
 
-
+#ifdef SOFT_SHADOWS
+			finalColor += Radiance * observedArea * BRDF * shadowFactor;
+#else
 			if (pScene->DoesHit(lightRay) && pScene->m_bShadowEnabled)
 			{
-
-				finalColor *= 0.99f;
-
+				finalColor *= 1.f;
 			}
 			else
 			{
-				finalColor += Radiance * observedArea * BRDF;
-
+				finalColor += Radiance * observedArea * BRDF * shadowFactor;
 			}
+#endif // _DEBUG
+			
 
 		}
 
 	}
-
+	
 	//Update Color in Buffer
 	finalColor.MaxToOne();
 

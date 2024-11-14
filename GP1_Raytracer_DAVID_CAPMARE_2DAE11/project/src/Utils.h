@@ -4,6 +4,8 @@
 #include <iostream>
 #include "DataTypes.h"
 
+#include <random>
+
 namespace dae
 {
 	namespace GeometryUtils
@@ -247,6 +249,20 @@ namespace dae
 
 			}
 			return ColorRGB();
+		}
+
+		inline Vector3 GetRandomPointNearLight(const Light& light, float radius) {
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_real_distribution<float> dis(-1.0f, 1.0f);
+
+			Vector3 randomPoint;
+			do {
+				randomPoint = Vector3(dis(gen), dis(gen), dis(gen));
+			} while (randomPoint.SqrMagnitude() > 1.0f);
+
+			return light.origin + randomPoint * radius;
+
 		}
 	}
 
