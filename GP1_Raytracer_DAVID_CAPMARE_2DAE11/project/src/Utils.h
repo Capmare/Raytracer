@@ -5,6 +5,7 @@
 #include "DataTypes.h"
 
 #include <random>
+#include "SquirellNoise5.hpp"
 
 namespace dae
 {
@@ -84,7 +85,7 @@ namespace dae
 			//todo W5
 			const Vector3 a = triangle.v1 - triangle.v0;
 			const Vector3 b = triangle.v2 - triangle.v0;
-			const Vector3 n = Vector3::Cross(a,b).Normalized();
+			const Vector3 n = Vector3::Cross(a,b);
 
 			const float nv = Vector3::Dot(n, ray.direction);
 
@@ -114,7 +115,6 @@ namespace dae
 
 			const Vector3 e0 = triangle.v1 - triangle.v0; 
 			const Vector3 p0 = P - triangle.v0;
-
 			if (Vector3::Dot(Vector3::Cross(e0, p0),n) < 0) return false;
 
 			const Vector3 e1 = triangle.v2 - triangle.v1;
@@ -250,17 +250,15 @@ namespace dae
 			}
 			return ColorRGB();
 		}
+		static unsigned int i{};
 
 		inline Vector3 GetRandomPointNearLight(const Light& light, float radius) {
-			std::random_device rd;
-			std::mt19937_64 gen(rd());
-			std::uniform_real_distribution<float> dis(-1.0f, 1.0f);
 
 			Vector3 randomPoint;
 			do {
-				randomPoint = Vector3(dis(gen), dis(gen), dis(gen));
+				randomPoint = Vector3(Get1dNoiseNegOneToOne(i,i), Get1dNoiseNegOneToOne(++i, i), Get1dNoiseNegOneToOne(++i, i));
 			} while (randomPoint.SqrMagnitude() > 1.0f);
-
+			
 			return light.origin + randomPoint * radius;
 
 		}
