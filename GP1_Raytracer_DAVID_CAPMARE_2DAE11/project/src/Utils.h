@@ -6,6 +6,10 @@
 
 #include <random>
 #include "SquirellNoise5.hpp"
+#include <immintrin.h>
+
+//#define USE_SIMD_OP 
+
 
 namespace dae
 {
@@ -79,7 +83,62 @@ namespace dae
 		}
 #pragma endregion
 #pragma region Triangle HitTest
+#ifdef USE_SIMD_OP
 		//TRIANGLE HIT-TESTS
+		// https://stackoverflow.blog/2020/07/08/improving-performance-with-simd-intrinsics-in-three-use-cases/ thank god to this
+		inline bool CalculateVerticesSIMD(const Vector3& P, const Vector3& n, const Vector3& v0, const Vector3& v1, const Vector3& v2) {
+			
+			// load all the points into vectors
+
+			__m128 vecP = _mm_set_ps(0.0f, P.z, P.y, P.x);
+			__m128 vecV0 = _mm_set_ps(0.0f, v0.z, v0.y, v0.x);
+			__m128 vecV1 = _mm_set_ps(0.0f, v1.z, v1.y, v1.x);
+			__m128 vecV2 = _mm_set_ps(0.0f, v2.z, v2.y, v2.x);
+			__m128 vecN = _mm_set_ps(0.0f, n.z, n.y, n.x);
+#pragma region 01
+			// calculate e0 and p0
+			__m128 e0 = _mm_sub_ps(vecV1, vecV0);
+			__m128 p0 = _mm_sub_ps(vecP, vecV0);
+
+			// cross product e0 and p0 //https://geometrian.com/programming/tutorials/cross-product/index.php
+			__m128 e0p0_cross = _mm_sub_ps
+			(
+				_mm_mul_ps(_mm_shuffle_ps(e0, e0, _MM_SHUFFLE(3, 0, 2, 1)), _mm_shuffle_ps(p0, p0, _MM_SHUFFLE(3, 1, 0, 2))),
+				_mm_mul_ps(_mm_shuffle_ps(e0, e0, _MM_SHUFFLE(3, 1, 0, 2)), _mm_shuffle_ps(p0, p0, _MM_SHUFFLE(3, 0, 2, 1)))
+			);
+
+			__m128 dot0 = _mm_dp_ps(e0p0_cross, vecN, 0x71);
+			if (_mm_cvtss_f32(dot0) < 0) return false;
+#pragma endregion 01
+#pragma region 12
+
+			__m128 e1 = _mm_sub_ps(vecV2, vecV1);
+			__m128 p1 = _mm_sub_ps(vecP, vecV1);
+			__m128 e1p1_cross = _mm_sub_ps(
+				_mm_mul_ps(_mm_shuffle_ps(e1, e1, _MM_SHUFFLE(3, 0, 2, 1)), _mm_shuffle_ps(p1, p1, _MM_SHUFFLE(3, 1, 0, 2))),
+				_mm_mul_ps(_mm_shuffle_ps(e1, e1, _MM_SHUFFLE(3, 1, 0, 2)), _mm_shuffle_ps(p1, p1, _MM_SHUFFLE(3, 0, 2, 1)))
+			);
+			__m128 dot1 = _mm_dp_ps(e1p1_cross, vecN, 0x71);
+			if (_mm_cvtss_f32(dot1) < 0) return false;
+#pragma endregion 12
+#pragma  region 20
+			__m128 e2 = _mm_sub_ps(vecV0, vecV2);
+			__m128 p2 = _mm_sub_ps(vecP, vecV2);
+			__m128 e2p2_cross = _mm_sub_ps(
+				_mm_mul_ps(_mm_shuffle_ps(e2, e2, _MM_SHUFFLE(3, 0, 2, 1)), _mm_shuffle_ps(p2, p2, _MM_SHUFFLE(3, 1, 0, 2))),
+				_mm_mul_ps(_mm_shuffle_ps(e2, e2, _MM_SHUFFLE(3, 1, 0, 2)), _mm_shuffle_ps(p2, p2, _MM_SHUFFLE(3, 0, 2, 1)))
+			);
+			__m128 dot2 = _mm_dp_ps(e2p2_cross, vecN, 0x71);
+			if (_mm_cvtss_f32(dot2) < 0) return false;
+#pragma endregion 20
+
+			return true;
+
+
+
+		}
+#endif // USE_SIMD_OP
+
 		inline bool HitTest_Triangle(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
 		{
 			//todo W5
@@ -113,9 +172,12 @@ namespace dae
 
 			const Vector3 P = ray.origin + ray.direction * t;
 
-			const Vector3 e0 = triangle.v1 - triangle.v0; 
+#ifdef USE_SIMD_OP
+			if (!CalculateVerticesSIMD(P, n, triangle.v0, triangle.v1, triangle.v2)) return false;
+#else
+			const Vector3 e0 = triangle.v1 - triangle.v0;
 			const Vector3 p0 = P - triangle.v0;
-			if (Vector3::Dot(Vector3::Cross(e0, p0),n) < 0) return false;
+			if (Vector3::Dot(Vector3::Cross(e0, p0), n) < 0) return false;
 
 			const Vector3 e1 = triangle.v2 - triangle.v1;
 			const Vector3 p1 = P - triangle.v1;
@@ -124,6 +186,10 @@ namespace dae
 			const Vector3 e2 = triangle.v0 - triangle.v2;
 			const Vector3 p2 = P - triangle.v2;
 			if (Vector3::Dot(Vector3::Cross(e2, p2), n) < 0) return false;
+#endif 
+			 
+
+			
 
 			if (!ignoreHitRecord)
 			{
@@ -252,13 +318,22 @@ namespace dae
 		}
 		static unsigned int i{};
 
-		inline Vector3 GetRandomPointNearLight(const Light& light, float radius) {
+		inline Vector3 GetRandomPointNearLight(const Light& light, const float& radius) {
 
-			Vector3 randomPoint;
-			do {
-				randomPoint = Vector3(Get1dNoiseNegOneToOne(i,i), Get1dNoiseNegOneToOne(++i, i), Get1dNoiseNegOneToOne(++i, i));
-			} while (randomPoint.SqrMagnitude() > 1.0f);
-			
+			// uniform numbers in a sphere
+
+			float u = Get1dNoiseZeroToOne(i);
+			float theta = 2.0f * M_PI * Get1dNoiseZeroToOne(++i);
+			float phi = acos(1.0f - 2.0f * u);
+
+			// convert to cartesian coordinates
+			float sinPhi = sin(phi);
+			Vector3 randomPoint(
+				sinPhi * cos(theta),
+				sinPhi * sin(theta),
+				cos(phi)
+			);
+
 			return light.origin + randomPoint * radius;
 
 		}
