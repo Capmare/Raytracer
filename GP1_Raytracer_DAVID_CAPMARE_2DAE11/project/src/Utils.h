@@ -85,7 +85,7 @@ namespace dae
 			//todo W5
 			const Vector3 a = triangle.v1 - triangle.v0;
 			const Vector3 b = triangle.v2 - triangle.v0;
-			const Vector3 n = Vector3::Cross(a,b);
+			const Vector3 n = Vector3::Cross(a,b).Normalized();
 
 			const float nv = Vector3::Dot(n, ray.direction);
 
