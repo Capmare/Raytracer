@@ -73,7 +73,7 @@ bool Renderer::SaveBufferToImage() const
 
 void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float aspectRatio, const Matrix cameraToWorld, const Vector3 cameraOrigin) const
 {
-	auto materials{ pScene->GetMaterials() };
+	const std::vector<Material*>& materials{ pScene->GetMaterials() };
 
 	const uint32_t px{ pixelIndex % m_Width }, py{ pixelIndex / m_Width };
 

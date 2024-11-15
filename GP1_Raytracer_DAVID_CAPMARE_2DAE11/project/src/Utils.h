@@ -253,7 +253,7 @@ namespace dae
 
 		inline Vector3 GetRandomPointNearLight(const Light& light, float radius) {
 			std::random_device rd;
-			std::mt19937 gen(rd());
+			std::mt19937_64 gen(rd());
 			std::uniform_real_distribution<float> dis(-1.0f, 1.0f);
 
 			Vector3 randomPoint;
